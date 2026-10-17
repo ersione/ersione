@@ -1,0 +1,65 @@
+name: Refresh profile news
+
+on:
+  schedule:
+    - cron: '17 0,12 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/update_readme.py
+      - tests/test_update_readme.py
+      - .github/workflows/profile-news.yml
+  pull_request:
+    paths:
+      - scripts/update_readme.py
+      - tests/test_update_readme.py
+      - .github/workflows/profile-news.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: profile-news-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: python3 -m unittest discover -s tests -v
+
+  refresh:
+    needs: test
+    if: github.repository == 'ersione/ersione' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Refresh public blog posts and releases
+        id: news
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/update_readme.py
+      - name: Commit changed news only
+        run: |
+          if git diff --quiet -- README.md; then
+            echo 'No new public news'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md
+          git commit -m 'docs(profile): refresh public posts and releases'
+          git push origin HEAD:main
+      - name: Report any source failure
+        if: steps.news.outcome == 'failure'
+        run: |
+          echo 'A news source failed; its previous content was preserved.'
+          exit 1
