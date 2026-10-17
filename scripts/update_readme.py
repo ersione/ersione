@@ -1,7 +1,6 @@
 """Read the profile API and atomically refresh only marked README news sections."""
 import argparse
 from datetime import datetime, timezone
-import hashlib
 import html
 import json
 from pathlib import Path
@@ -9,9 +8,8 @@ import re
 import sys
 import tempfile
 from urllib.error import HTTPError
-from urllib.parse import parse_qs, urljoin, urlsplit
+from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
-import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORIES = {'ersione-design-system', 'ersione-studio', 'company-lens'}
@@ -69,23 +67,6 @@ def date(value):
     return parsed.date().isoformat()
 
 
-def validate_svg(body, version):
-    if b'<!' in body or len(body) > 64 * 1024:
-        raise ValueError('Unexpected SVG declaration or size')
-    root = ET.fromstring(body)
-    namespace = '{http://www.w3.org/2000/svg}'
-    if root.tag != namespace + 'svg' or root.attrib.get('data-version') != version:
-        raise ValueError('Badge version mismatch')
-    allowed_tags = {'svg', 'title', 'rect', 'path', 'g'}
-    allowed_attrs = {'xmlns', 'width', 'height', 'viewBox', 'role', 'data-version', 'fill', 'd', 'rx', 'x', 'y', 'transform', 'aria-label'}
-    for element in root.iter():
-        if element.tag not in {namespace + name for name in allowed_tags} or set(element.attrib) - allowed_attrs:
-            raise ValueError('Unsafe SVG content')
-        if any(re.search(r'url\s*\(|javascript:|https?:', value, re.I) for key, value in element.attrib.items() if key != 'data-version'):
-            raise ValueError('External SVG content')
-    return body
-
-
 def replace_sections(original, releases, posts):
     result = original
     # Validate every boundary before performing any replacement.
@@ -110,7 +91,7 @@ def prepare(original, base, loader=fetch):
     data = json.loads(loader(base + '/api/profile/news', 'application/json'))
     if data.get('schemaVersion') != 1 or data.get('status') != 'ready':
         raise ValueError('Profile API is not ready')
-    assets, release_lines, post_lines = {}, [], []
+    release_lines, post_lines = [], []
     for name in ('releases', 'posts'):
         section = data.get(name, {})
         if section.get('status') != 'ready' or not isinstance(section.get('items'), list) or not 1 <= len(section['items']) <= 2:
@@ -118,22 +99,19 @@ def prepare(original, base, loader=fetch):
     ids = set()
     for item in data['releases']['items']:
         repo, version = item['repository'], item['version']
-        if repo not in REPOSITORIES or not isinstance(version, str) or not version.strip() or len(version) > 100 or re.search(r'[\x00-\x1f]', version):
+        if repo not in REPOSITORIES or not isinstance(version, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._+-]{0,99}', version):
             raise ValueError('Invalid release identity')
         identity = f'{repo}@{version}'
         if item.get('id') != identity or identity in ids:
             raise ValueError('Duplicate or inconsistent release')
         ids.add(identity)
         url = source_url(item['url'], 'github.com', f'/ersione/{repo}/releases/tag/')
-        badge = urlsplit(item['badgeUrl'])
-        if badge.scheme or badge.netloc or badge.fragment or badge.path != f'/api/profile/release/{repo}.svg' or parse_qs(badge.query, keep_blank_values=True) != {'version': [version]}:
-            raise ValueError('Unexpected release badge URL')
-        # Finish all data and image validation before writing anything.
-        published, label, alt = date(item['publishedAt']), title(item['title']), title(item['alt'])
-        body = validate_svg(loader(urljoin(base + '/', item['badgeUrl']), 'image/svg+xml'), version)
-        filename = 'release-' + hashlib.sha256(body).hexdigest() + '.svg'
-        assets[filename] = body
-        release_lines.append(f'- [{label}](<{url}>) [![{alt}](assets/news/{filename})](<{url}>) · {published}')
+        published, label = date(item['publishedAt']), title(item['title'])
+        badge = 'https://img.shields.io/static/v1?' + urlencode({
+            'label': 'release', 'message': version, 'color': '6b7280',
+            'labelColor': '555', 'style': 'flat',
+        })
+        release_lines.append(f'- [{label}](<{url}>) [![release {version}]({badge})](<{url}>) · {published}')
     ids = set()
     for item in data['posts']['items']:
         url = source_url(item['url'], 'blog.ersione.com')
@@ -141,7 +119,7 @@ def prepare(original, base, loader=fetch):
             raise ValueError('Duplicate or inconsistent post')
         ids.add(url)
         post_lines.append(f"- [{title(item['title'])}](<{url}>) · {date(item['publishedAt'])}")
-    return replace_sections(original, '\n'.join(release_lines), '\n'.join(post_lines)), assets
+    return replace_sections(original, '\n'.join(release_lines), '\n'.join(post_lines))
 
 
 def atomic_write(path, body):
@@ -159,19 +137,11 @@ def atomic_write(path, body):
 
 def refresh_file(path, base, loader=fetch, dry_run=False):
     original = path.read_bytes()
-    updated, assets = prepare(original.decode('utf-8'), base, loader)
+    updated = prepare(original.decode('utf-8'), base, loader)
     encoded = updated.encode('utf-8')
-    destinations = {path.parent / 'assets' / 'news' / name: body for name, body in assets.items()}
-    for destination, body in destinations.items():
-        if destination.exists() and destination.read_bytes() != body:
-            raise ValueError('Immutable badge asset differs')
-    changed = encoded != original or any(not destination.exists() for destination in destinations)
+    changed = encoded != original
     if not dry_run and changed:
-        for destination, body in destinations.items():
-            if not destination.exists():
-                atomic_write(destination, body)
-        if encoded != original:
-            atomic_write(path, encoded)
+        atomic_write(path, encoded)
     return changed
 
 
