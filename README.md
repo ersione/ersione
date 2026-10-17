@@ -11,18 +11,22 @@
 
 만들고, 운영하고, 기록하는 작은 작업실.
 
-[![Louis Kim의 Ersione Studio — 프로젝트와 작은 게임이 놓인 3D 작업실](assets/studio-banner.png)](https://studio.ersione.com)
+[![Louis Kim의 Ersione Studio — 서울 시간에 따라 조명이 바뀌는 3D 작업실](https://ersione.com/api/profile/studio.png)](https://studio.ersione.com)
 
 **[작업실 들어가기 →](https://studio.ersione.com)**<br/>
 방마다 담긴 프로젝트를 둘러보고, 잠깐 게임도 즐겨보세요.
 
 ### 작업실에서 만드는 것들
 
-| 🎮 PogoAtlas | 🔎 Company Lens | 🎨 Design System |
-| --- | --- | --- |
-| 포켓몬 GO를 더 즐겁게 | 공개 데이터로 들여다보는 회사 | 여러 프로젝트가 공유하는 UI |
-| 도감·레이드·배틀 순위를 한곳에 모았습니다. | 회사와 업종의 고용 변화를 살펴봅니다. | 디자인 토큰·React 컴포넌트·테마를 관리합니다. |
-| [서비스 열기 ↗](https://pogo.ersione.com) | [서비스 열기 ↗](https://companylens.ersione.com) | [컴포넌트 둘러보기 ↗](https://ersione-design-system.ersione.chatgpt.site/) · [코드](https://github.com/ersione/ersione-design-system) |
+<p>
+  <a href="https://pogo.ersione.com"><img src="https://ersione.com/api/profile/project/pogoatlas.png" width="260" alt="PogoAtlas — 포켓몬 GO 도감·레이드·배틀 순위" /></a>
+  <a href="https://companylens.ersione.com"><img src="https://ersione.com/api/profile/project/company-lens.png" width="260" alt="Company Lens — 공개 고용 데이터로 회사와 업종의 변화 탐색" /></a>
+  <a href="https://ersione-design-system.ersione.chatgpt.site/"><img src="https://ersione.com/api/profile/project/design-system.png" width="260" alt="Ersione Design System — 공통 디자인 토큰·React 컴포넌트·테마" /></a>
+</p>
+
+- **PogoAtlas** · [서비스 열기 ↗](https://pogo.ersione.com)
+- **Company Lens** · [서비스 열기 ↗](https://companylens.ersione.com) · [코드](https://github.com/ersione/company-lens)
+- **Ersione Design System** · [컴포넌트 둘러보기 ↗](https://ersione-design-system.ersione.chatgpt.site/) · [코드](https://github.com/ersione/ersione-design-system)
 
 ### 작업대 위의 최근 소식
 
