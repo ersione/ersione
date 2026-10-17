@@ -2,8 +2,9 @@ name: Refresh profile news from API
 
 on:
   schedule:
-    # 09:17 Asia/Seoul, once per day. GitHub may delay scheduled runs.
-    - cron: '17 0 * * *'
+    # 04:00 Asia/Seoul, once per day (19:00 UTC on the previous day).
+    # GitHub may delay scheduled runs.
+    - cron: '0 19 * * *'
   workflow_dispatch:
   push:
     branches: [main]
