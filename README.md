@@ -33,14 +33,12 @@
 **만든 것**
 
 <!-- releases:start -->
-- [Ersione Design System](<https://github.com/ersione/ersione-design-system/releases/tag/v0.5.1>) [![정식 릴리스 v0.5.1](assets/news/release-b6d3ff887e631761421ac3c2d802f3364df669b3d0d894c02705f72ed446f392.svg)](<https://github.com/ersione/ersione-design-system/releases/tag/v0.5.1>) · 2026-10-14
+- [Ersione Design System](<https://github.com/ersione/ersione-design-system/releases/tag/v0.5.1>) [![release v0.5.1](https://img.shields.io/static/v1?label=release&message=v0.5.1&color=6b7280&labelColor=555&style=flat)](<https://github.com/ersione/ersione-design-system/releases/tag/v0.5.1>) · 2026-10-14
 <!-- releases:end -->
 
-**기록한 것**
+**기록한 것** · [블로그 더 보기 ↗](https://blog.ersione.com)
 
 <!-- posts:start -->
 - [Audit Event에서 AI 챗봇까지](<https://blog.ersione.com/software-architecture/from-audit-events-to-ai-chatbot>) · 2026-03-01
 - [메달리온 데이터 위에 Text-to-SQL과 RAG 올리기](<https://blog.ersione.com/software-architecture/adding-text-to-sql-and-rag-on-medallion-data>) · 2026-02-20
 <!-- posts:end -->
-
-[글 더 읽기 →](https://blog.ersione.com)
