@@ -22,7 +22,7 @@
 | --- | --- | --- |
 | 포켓몬 GO를 더 즐겁게 | 공개 데이터로 들여다보는 회사 | 여러 프로젝트가 공유하는 UI |
 | 도감·레이드·배틀 순위를 한곳에 모았습니다. | 회사와 업종의 고용 변화를 살펴봅니다. | 디자인 토큰·React 컴포넌트·테마를 관리합니다. |
-| [서비스 열기 ↗](https://pogo.ersione.com) | [서비스 열기 ↗](https://companylens.ersione.com) | [컴포넌트 둘러보기 ↗](https://ersione-design-system.ersione.chatgpt.site/) · [코드](https://github.com/ersione/ersione-design-system) |
+| [서비스 열기 ↗](https://pogo.ersione.com) | [서비스 열기 ↗](https://companylens.ersione.com) · [코드](https://github.com/ersione/company-lens) | [컴포넌트 둘러보기 ↗](https://ersione-design-system.ersione.chatgpt.site/) · [코드](https://github.com/ersione/ersione-design-system) |
 
 ### 작업대 위의 최근 소식
 
