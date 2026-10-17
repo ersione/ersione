@@ -5,7 +5,7 @@
 복잡한 시스템을 이해하고, 안정적으로 운영할 수 있는 구조를 만듭니다.<br/>
 온라인에서는 **Ersione**라는 이름으로 서비스를 만들고 기록합니다.
 
-[홈페이지](https://ersione.com) · [이력서](https://resume.ersione.com) · [블로그](https://blog.ersione.com)
+[홈페이지](https://ersione.com) · [블로그](https://blog.ersione.com)
 
 ### Ersione’s Studio
 
